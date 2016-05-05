@@ -1,0 +1,44 @@
+.idea
+.classpath
+.project
+.settings/
+target/
+we16-ue2.iml
+
+#java specific
+*.class
+*.jar
+
+#build
+/build
+/out
+/bin
+/target
+/classes
+
+#IDEA
+/*.iml
+/*.ipr
+/*.iws
+.idea
+
+#eclipse
+*.classpath
+*.project
+*.settings
+
+# database
+*.h2
+
+## generic files to ignore
+*~
+*.lock
+*.log
+*.lck
+*.DS_Store
+*.swp
+*.out
+.gradle
+
+
+desktop.ini

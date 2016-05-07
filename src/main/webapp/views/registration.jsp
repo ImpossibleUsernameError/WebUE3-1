@@ -1,3 +1,4 @@
+<%@ page import="com.google.gson.JsonObject" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -6,6 +7,10 @@
     <jsp:param name="title" value="Registrieren" />
     <jsp:param name="showLogin" value="true" />
 </jsp:include>
+
+<script src="/scripts/jquery.js"></script>
+<script src="/scripts/framework.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/style.css" />
 
 <main role="main" aria-labelledby="formheadline">
     <form class="form" method="post">
@@ -27,31 +32,38 @@
                     Vorname *
                 </label>
                 <input type="text" name="firstname" id="firstname-input" class="form-input">
+
             </div>
+            <span id="firstname-error" class="span">Geben Sie bitte einen Vornamen ein.</span>
             <div class="form-row">
                 <label class="form-label" for="lastname-input">
                     Nachname *
                 </label>
                 <input type="text" name="lastname" id="lastname-input" class="form-input">
             </div>
+            <span id="lastname-error">Geben Sie bitte einen Nachnamen ein.</span>
             <div class="form-row">
                 <label class="form-label" for="dateofbirth-input">
                     Geburtsdatum *
                 </label>
                 <input type="text" name="dateofbirth" id="dateofbirth-input" class="form-input">
             </div>
+            <span id="birthDate18-error">Sie m&uuml;ssen mindestens 18 Jahre als sein, um sich registrieren zu k&ouml;nnen.</span>
+            <span id="birthDate-error">Verwenden Sie bitte ein g&uuml;ltiges Datums-Format. Beispiele: dd.mm.yyyy, dd/mm/yyyy, dd-mm-yyyy</span>
             <div class="form-row">
                 <label class="form-label" for="email-input">
                     Email *
                 </label>
                 <input type="text" name="email" id="email-input" class="form-input">
             </div>
+            <span id="email-error">Bitte geben Sie eine g&uuml;ltige E-Mail-Adresse an.</span>
             <div class="form-row">
                 <label class="form-label" for="password-input">
                     Passwort *
                 </label>
                 <input type="password" name="password" id="password-input" class="form-input">
             </div>
+            <span id="password-error">Das Passwort muss zwischen 4 und 8 Zeichen besitzen.</span>
         </fieldset>
 
         <fieldset>
@@ -100,5 +112,69 @@
         </div>
     </form>
 </main>
+
+<script>
+    $("#firstname-error").hide();
+    $("#lastname-error").hide();
+    $("#birthDate-error").hide();
+    $("#birthDate18-error").hide();
+    $("#email-error").hide();
+    $("#password-error").hide();
+</script>
+
+<%
+    JsonObject json = (JsonObject)request.getAttribute("JSON");
+
+    if(json != null){
+
+        if(json.get("firstnameValid").toString().equals("false")){
+%>
+            <script>
+                $("#firstname-error").show();
+            </script>
+<%
+        }
+
+        if(json.get("lastnameValid").toString().equals("false")){
+%>
+            <script>
+                $("#lastname-error").show();
+            </script>
+<%
+        }
+
+        if(json.get("dateofbirthValid").toString().equals("false")){
+%>
+            <script>
+                $("#birthDate-error").show();
+            </script>
+<%
+        } else{
+            if(json.get("dateofbirth18Valid").toString().equals("false")){
+%>
+                <script>
+                    $("#birthDate18-error").show();
+                </script>
+<%
+            }
+        }
+
+        if(json.get("emailValid").toString().equals("false")){
+%>
+            <script>
+                $("#email-error").show();
+            </script>
+<%
+        }
+
+        if(json.get("passwordValid").toString().equals("false")){
+%>
+            <script>
+                $("#password-error").show();
+            </script>
+<%
+        }
+    }
+%>
 
 <jsp:include page='partials/footer.jsp'/>

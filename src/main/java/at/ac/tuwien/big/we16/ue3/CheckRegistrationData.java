@@ -1,57 +1,116 @@
 package at.ac.tuwien.big.we16.ue3;
 
-import javax.jws.WebMethod;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@WebService(name="CheckRegistrationData")
-@SOAPBinding(style=SOAPBinding.Style.RPC)
 public class CheckRegistrationData {
 
-    @WebMethod(operationName="checkFirstNameFunction")
-    @WebResult(name="isFirstNameValid")
     public boolean checkFirstName(String firstName){
-        if(firstName.length() == 0){
+        if(firstName.length() <= 0){
             return false;
         }
         return true;
     }
 
-    @WebMethod(operationName="checkLastNameFunction")
-    @WebResult(name="isLastNameValid")
     public boolean checkLastName(String lastName){
-        if(lastName.length() == 0){
+        if(lastName.length() <= 0){
             return false;
         }
         return true;
     }
 
-    @WebMethod(operationName="checkBirthDateFunction")
-    @WebResult(name="isBirthDateValid")
     public boolean checkBirthDate(String birthDate){
-        return false;
+
+        boolean valid = false;
+
+        try{
+            new SimpleDateFormat("dd.mm.yyyy").parse(birthDate);
+            valid = true;
+        } catch(ParseException pe){
+            if(!valid){
+                valid = false;
+            }
+        }
+
+        try{
+            new SimpleDateFormat("dd/mm/yyyy").parse(birthDate);
+            valid = true;
+        } catch(ParseException pe){
+            if(!valid){
+                valid = false;
+            }
+        }
+
+        try{
+            new SimpleDateFormat("dd-mm-yyyy").parse(birthDate);
+            valid = true;
+        } catch(ParseException pe){
+            if(!valid){
+                valid = false;
+            }
+        }
+
+        return valid;
     }
 
-    @WebMethod(operationName="checkEMailFunction")
-    @WebResult(name="isEMailValid")
+    public boolean checkBirthDate18(String birthDate){
+        if(!birthDate.equals("")) {
+            Date date = null;
+
+            try {
+                if (date == null) {
+                    date = new SimpleDateFormat("dd.mm.yyyy").parse(birthDate);
+                }
+            } catch (ParseException pe) {
+                date = null;
+            }
+
+            try {
+                if (date == null) {
+                    date = new SimpleDateFormat("dd/mm/yyyy").parse(birthDate);
+                }
+
+            } catch (ParseException pe) {
+                date = null;
+            }
+
+            try {
+                if (date == null) {
+                    date = new SimpleDateFormat("dd-mm-yyyy").parse(birthDate);
+                }
+
+            } catch (ParseException pe) {
+                date = null;
+            }
+
+            Date date18YearsBefore = new Date(18 * 365 * 24 * 60 * 60 * 1000);
+
+            if (date.after(new Date()) || date.before(date18YearsBefore)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean checkEMail(String eMail){
+        Pattern pattern = Pattern.compile("^(.+)@(.+)$");
+        Matcher matcher = pattern.matcher(eMail);
+
+        if(matcher.matches()){
+            return true;
+        }
         return false;
     }
 
-    @WebMethod(operationName="checkPasswordFunction")
-    @WebResult(name="isPasswordValid")
     public boolean checkPassword(String password){
         if(password.length() < 4 || password.length() > 8){
             return false;
         }
         return true;
-    }
-
-    @WebMethod(operationName="checkAGBFunction")
-    @WebResult(name="isAGBValid")
-    public boolean checkAGB(boolean isChecked){
-        return isChecked;
     }
 }

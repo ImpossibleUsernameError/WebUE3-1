@@ -39,27 +39,29 @@ public class UserController {
         String eMail = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if(!checkRegData.checkFirstName(firstname) || checkRegData.checkLastName(lastname) || checkRegData.checkBirthDate(dateOfBirth) ||
-                !checkRegData.checkEMail(eMail) || !checkRegData.checkPassword(password)){
+        if(!checkRegData.checkFirstName(firstname) || !checkRegData.checkLastName(lastname) || !checkRegData.checkBirthDate(dateOfBirth) ||
+                !checkRegData.checkBirthDate18(dateOfBirth) || !checkRegData.checkEMail(eMail) || !checkRegData.checkPassword(password)){
 
             JsonObject json = new JsonObject();
             json.addProperty("firstnameValid", checkRegData.checkFirstName(firstname));
             json.addProperty("lastnameValid", checkRegData.checkLastName(lastname));
             json.addProperty("dateofbirthValid", checkRegData.checkBirthDate(dateOfBirth));
+            json.addProperty("dateofbirth18Valid", checkRegData.checkBirthDate18(dateOfBirth));
             json.addProperty("emailValid", checkRegData.checkEMail(eMail));
             json.addProperty("passwordValid", checkRegData.checkPassword(password));
 
-            response.getWriter().write(json.toString());
+            request.setAttribute("JSON", json);
 
             request.getRequestDispatcher("/views/registration.jsp").forward(request, response);
-            response.sendRedirect("/views/registration.jsp");
             return;
         }
 
+        // TODO User erstellen, in Datenbank speichern und zur OverviewSeite weiterleiten
         User user = new User();
         this.userService.createUser(user);
         this.authService.login(request.getSession(), user);
-        response.sendRedirect("/");
+        response.sendRedirect("/views/overview.jsp");
+        request.getRequestDispatcher("/views/overview.jsp").forward(request, response);
     }
 
 }
